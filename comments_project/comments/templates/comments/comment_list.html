@@ -1,0 +1,18 @@
+<h2>Усі коментарі</h2>
+
+<ul>
+    {% for comment in comments %}
+        <li>
+            <strong>{{ comment.username }}</strong>: {{ comment.text }} ({{ comment.created_at }})
+            <a href="{% url 'comments:reply_comment' comment.id %}">Відповісти</a>
+
+            <!-- Відображення відповідей на коментар -->
+            {% if comment.replies.all %}
+                <ul>
+                    {% include 'comments/comment_replies.html' with replies=comment.replies.all %}
+                </ul>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+<a href="{% url 'comments:add_comment' %}">Додати новий коментар</a>

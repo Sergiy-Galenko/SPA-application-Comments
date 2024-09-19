@@ -1,0 +1,39 @@
+<h2>Додати новий коментар</h2>
+<form id="commentForm" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Додати коментар</button>
+    <button type="button" id="previewButton">Попередній перегляд</button>
+</form>
+
+<!-- Місце для відображення попереднього перегляду -->
+<div id="previewArea" style="display: none; border: 1px solid #ccc; margin-top: 20px; padding: 10px;">
+    <h3>Попередній перегляд:</h3>
+    <div id="previewContent"></div>
+</div>
+
+<script>
+document.getElementById('previewButton').addEventListener('click', function() {
+    // Отримання даних з форми
+    const form = document.getElementById('commentForm');
+    const formData = new FormData(form);
+
+    // Виконання запиту AJAX для отримання попереднього перегляду
+    fetch("{% url 'comments:preview_comment' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Відображення попереднього перегляду
+        const previewArea = document.getElementById('previewArea');
+        const previewContent = document.getElementById('previewContent');
+        previewContent.innerHTML = data.preview;
+        previewArea.style.display = 'block';
+    })
+    .catch(error => console.error('Error:', error));
+});
+</script>

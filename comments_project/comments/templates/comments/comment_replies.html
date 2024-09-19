@@ -1,0 +1,13 @@
+{% for reply in replies %}
+    <li>
+        <strong>{{ reply.username }}</strong>: {{ reply.text }} ({{ reply.created_at }})
+        <a href="{% url 'comments:reply_comment' reply.id %}">Відповісти</a>
+
+        <!-- Відображення відповідей на цей коментар -->
+        {% if reply.replies.all %}
+            <ul>
+                {% include 'comments/comment_replies.html' with replies=reply.replies.all %}
+            </ul>
+        {% endif %}
+    </li>
+{% endfor %}
