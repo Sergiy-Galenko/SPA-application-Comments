@@ -1,7 +1,7 @@
 <h2>Усі коментарі</h2>
 
 <ul>
-    {% for comment in comments %}
+    {% for comment in page_obj %}
         <li>
             <strong>{{ comment.username }}</strong>: {{ comment.text }} ({{ comment.created_at }})
             <a href="{% url 'comments:reply_comment' comment.id %}">Відповісти</a>
@@ -15,4 +15,22 @@
         </li>
     {% endfor %}
 </ul>
+
+<!-- Пагінація -->
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; перша</a>
+            <a href="?page={{ page_obj.previous_page_number }}">назад</a>
+        {% endif %}
+
+        <span>Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">вперед</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">остання &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
 <a href="{% url 'comments:add_comment' %}">Додати новий коментар</a>

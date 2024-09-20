@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CommentForm
 from .models import Comment
@@ -36,8 +37,15 @@ def add_comment(request, parent_id=None):
     return render(request, 'comments/add_comment.html', {'form': form, 'parent_comment': parent_comment})
 
 def comment_list(request):
-    comments = Comment.objects.filter(parent__isnull=True).order_by('-created_at')  # Тільки головні коментарі
-    return render(request, 'comments/comment_list.html', {'comments': comments})
+    # Отримуємо всі коментарі, тільки головні (ті, що не є відповідями)
+    comment_list = Comment.objects.filter(parent__isnull=True).order_by('-created_at')
+    
+    # Пагінація: 5 коментарів на сторінку (змінюй це число за необхідністю)
+    paginator = Paginator(comment_list, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'comments/comment_list.html', {'page_obj': page_obj})
 
 def preview_comment(request):
     if request.method == 'POST':
