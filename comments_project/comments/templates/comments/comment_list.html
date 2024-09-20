@@ -1,5 +1,14 @@
 <h2>Усі коментарі</h2>
 
+<!-- Вибір сортування -->
+<div>
+    <label>Сортувати за: </label>
+    <a href="?sort=username">Ім'я користувача</a> |
+    <a href="?sort=email">Email</a> |
+    <a href="?sort=-created_at">Дата (нові)</a> |
+    <a href="?sort=created_at">Дата (старі)</a>
+</div>
+
 <ul>
     {% for comment in page_obj %}
         <li>
@@ -20,15 +29,15 @@
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; перша</a>
-            <a href="?page={{ page_obj.previous_page_number }}">назад</a>
+            <a href="?page=1&sort={{ sort_by }}">&laquo; перша</a>
+            <a href="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}">назад</a>
         {% endif %}
 
         <span>Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}</span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">вперед</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">остання &raquo;</a>
+            <a href="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}">вперед</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}">остання &raquo;</a>
         {% endif %}
     </span>
 </div>

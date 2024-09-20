@@ -37,15 +37,18 @@ def add_comment(request, parent_id=None):
     return render(request, 'comments/add_comment.html', {'form': form, 'parent_comment': parent_comment})
 
 def comment_list(request):
-    # Отримуємо всі коментарі, тільки головні (ті, що не є відповідями)
-    comment_list = Comment.objects.filter(parent__isnull=True).order_by('-created_at')
-    
-    # Пагінація: 5 коментарів на сторінку (змінюй це число за необхідністю)
-    paginator = Paginator(comment_list, 5)
+    # Отримуємо параметр сортування з GET-запиту
+    sort_by = request.GET.get('sort', '-created_at')  # За замовчуванням сортування за датою (від найновіших)
+
+    # Отримуємо всі головні коментарі і сортуємо за обраним параметром
+    comment_list = Comment.objects.filter(parent__isnull=True).order_by(sort_by)
+
+    # Пагінація: 5 коментарів на сторінку
+    paginator = Paginator(comment_list, 25)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
-    return render(request, 'comments/comment_list.html', {'page_obj': page_obj})
+
+    return render(request, 'comments/comment_list.html', {'page_obj': page_obj, 'sort_by': sort_by})
 
 def preview_comment(request):
     if request.method == 'POST':
