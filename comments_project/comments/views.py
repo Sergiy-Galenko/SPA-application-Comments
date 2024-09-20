@@ -4,6 +4,7 @@ from .forms import CommentForm
 from .models import Comment
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+from django.db.models import Q
 
 def preview_comment(request):
     if request.method == 'POST':
@@ -37,18 +38,25 @@ def add_comment(request, parent_id=None):
     return render(request, 'comments/add_comment.html', {'form': form, 'parent_comment': parent_comment})
 
 def comment_list(request):
-    # Отримуємо параметр сортування з GET-запиту
-    sort_by = request.GET.get('sort', '-created_at')  # За замовчуванням сортування за датою (від найновіших)
+    # Отримуємо параметри пошуку та сортування з GET-запиту
+    query = request.GET.get('q', '')
+    sort_by = request.GET.get('sort', '-created_at')  # За замовчуванням сортуємо за датою (нові спочатку)
 
-    # Отримуємо всі головні коментарі і сортуємо за обраним параметром
-    comment_list = Comment.objects.filter(parent__isnull=True).order_by(sort_by)
+    # Якщо є пошуковий запит, фільтруємо всі коментарі (включно з вкладеними)
+    if query:
+        comment_list = Comment.objects.filter(
+            Q(username__icontains=query) | Q(text__icontains=query)
+        ).order_by(sort_by)
+    else:
+        # Якщо пошуку немає, відображаємо тільки головні коментарі
+        comment_list = Comment.objects.filter(parent__isnull=True).order_by(sort_by)
 
     # Пагінація: 5 коментарів на сторінку
-    paginator = Paginator(comment_list, 25)
+    paginator = Paginator(comment_list, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'comments/comment_list.html', {'page_obj': page_obj, 'sort_by': sort_by})
+    return render(request, 'comments/comment_list.html', {'page_obj': page_obj, 'query': query, 'sort_by': sort_by})
 
 def preview_comment(request):
     if request.method == 'POST':

@@ -1,12 +1,18 @@
 <h2>Усі коментарі</h2>
 
+<!-- Форма пошуку -->
+<form method="GET" action="{% url 'comments:comment_list' %}">
+    <input type="text" name="q" placeholder="Пошук по коментарях..." value="{{ query }}">
+    <button type="submit">Шукати</button>
+</form>
+
 <!-- Вибір сортування -->
 <div>
     <label>Сортувати за: </label>
-    <a href="?sort=username">Ім'я користувача</a> |
-    <a href="?sort=email">Email</a> |
-    <a href="?sort=-created_at">Дата (нові)</a> |
-    <a href="?sort=created_at">Дата (старі)</a>
+    <a href="?sort=username&q={{ query }}">Ім'я користувача</a> |
+    <a href="?sort=email&q={{ query }}">Email</a> |
+    <a href="?sort=-created_at&q={{ query }}">Дата (нові)</a> |
+    <a href="?sort=created_at&q={{ query }}">Дата (старі)</a>
 </div>
 
 <ul>
@@ -29,15 +35,15 @@
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page=1&sort={{ sort_by }}">&laquo; перша</a>
-            <a href="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}">назад</a>
+            <a href="?page=1&sort={{ sort_by }}&q={{ query }}">&laquo; перша</a>
+            <a href="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}&q={{ query }}">назад</a>
         {% endif %}
 
         <span>Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}</span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}">вперед</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}">остання &raquo;</a>
+            <a href="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}&q={{ query }}">вперед</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}&q={{ query }}">остання &raquo;</a>
         {% endif %}
     </span>
 </div>
