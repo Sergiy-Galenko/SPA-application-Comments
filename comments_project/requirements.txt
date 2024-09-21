@@ -1,0 +1,7 @@
+Django>=5.1.1
+djangorestframework
+djangorestframework-simplejwt
+channels
+daphne
+dj-database-url
+Pillow
