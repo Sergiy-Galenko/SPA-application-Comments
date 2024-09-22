@@ -1,4 +1,12 @@
+version: '3'
+
 services:
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"  # Порт для Celery
+      - "15672:15672"  # Порт для RabbitMQ Management UI
+
   web:
     build: .
     command: python3 manage.py runserver 0.0.0.0:8000
@@ -6,5 +14,7 @@ services:
       - .:/app
     ports:
       - "8000:8000"
+    depends_on:
+      - rabbitmq
     environment:
       DJANGO_SETTINGS_MODULE: comments_project.settings

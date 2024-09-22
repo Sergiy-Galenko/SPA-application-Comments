@@ -5,3 +5,4 @@ channels
 daphne
 dj-database-url
 Pillow
+celery==5.3.0
